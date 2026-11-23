@@ -5,17 +5,17 @@
       <p>Manage student registrations and approvals.</p>
     </div>
 
-    <div class="student-count">Total Students: {{ totalRecords }}</div>
+    <div class="student-count">Total Students: {{ totalRecords() }}</div>
   </div>
 
-  @if (isLoading) {
+  @if (isLoading()) {
     <div class="loading-state">
       <div class="spinner-border text-primary"></div>
       <p>Loading students...</p>
     </div>
-  } @else if (errorMessage) {
+  } @else if (errorMessage()) {
     <div class="alert alert-danger">
-      {{ errorMessage }}
+      {{ errorMessage() }}
       <button class="btn btn-sm btn-outline-danger ms-3" (click)="loadStudents()">Retry</button>
     </div>
   } @else {
@@ -137,7 +137,7 @@
           </thead>
 
           <tbody>
-            @for (student of students; track student.studentId) {
+            @for (student of students(); track student.studentId) {
               <tr>
                 <td>
                   <div class="student-info">
@@ -234,7 +234,7 @@
     <!-- Pagination -->
     <div class="pagination-container">
       <div class="pagination-info">
-        Showing {{ students.length }} of {{ totalRecords }} students
+        Showing {{ students().length }} of {{ totalRecords() }} students
       </div>
 
       <div class="page-size-selector">
@@ -244,7 +244,7 @@
           #pageselect
           id="pageSize"
           class="form-select form-select-sm"
-          [value]="pageSize"
+          [value]="pageSize()"
           (change)="changePageSize(pageselect.value)"
         >
           <option value="5">5</option>
@@ -257,17 +257,17 @@
       <div class="pagination-controls">
         <button
           class="btn btn-outline-primary btn-sm"
-          [disabled]="pageNumber === 1 || isLoading"
+          [disabled]="pageNumber() === 1 || isLoading()"
           (click)="goToPreviousPage()"
         >
           Previous
         </button>
 
-        <span class="page-indicator"> Page {{ pageNumber }} of {{ totalPages }} </span>
+        <span class="page-indicator"> Page {{ pageNumber() }} of {{ totalPages() }} </span>
 
         <button
           class="btn btn-outline-primary btn-sm"
-          [disabled]="pageNumber === totalPages || isLoading"
+          [disabled]="pageNumber() === totalPages() || isLoading()"
           (click)="goToNextPage()"
         >
           Next
@@ -278,7 +278,7 @@
 </div>
 
 <!-- Student Details Modal -->
-@if (selectedStudent || isDetailsLoading || detailsError) {
+@if (selectedStudent() || isDetailsLoading() || detailsError()) {
   <div class="student-modal-backdrop">
     <div class="student-modal">
       <!-- Modal Header -->
@@ -293,14 +293,14 @@
           type="button"
           class="modal-close"
           aria-label="Close"
-          (click)="selectedStudent = null; detailsError = ''"
+          (click)="closeStudentDetails()"
         >
           &times;
         </button>
       </div>
 
       <!-- Loading -->
-      @if (isDetailsLoading) {
+      @if (isDetailsLoading()) {
         <div class="modal-loading">
           <div class="spinner-border text-primary"></div>
           <p>Loading student profile...</p>
@@ -308,34 +308,34 @@
       }
 
       <!-- Error -->
-      @else if (detailsError) {
+      @else if (detailsError()) {
         <div class="alert alert-danger m-4">
-          {{ detailsError }}
+          {{ detailsError() }}
         </div>
       }
 
       <!-- Student Information -->
-      @else if (selectedStudent) {
+      @else if (selectedStudent()) {
         <div class="student-modal-body">
           <!-- Profile -->
           <div class="profile-section">
             <div class="profile-avatar">
-              {{ selectedStudent.name.charAt(0).toUpperCase() }}
+              {{ selectedStudent()!.name.charAt(0).toUpperCase() }}
             </div>
 
             <div class="profile-info">
-              <h2>{{ selectedStudent.name }}</h2>
-              <p>{{ selectedStudent.email }}</p>
+              <h2>{{ selectedStudent()!.name }}</h2>
+              <p>{{ selectedStudent()!.email }}</p>
               <span
                 class="profile-status"
-                [class.pending]="selectedStudent.status === 0"
-                [class.approved]="selectedStudent.status === 1"
-                [class.rejected]="selectedStudent.status === 2"
+                [class.pending]="selectedStudent()!.status === 0"
+                [class.approved]="selectedStudent()!.status === 1"
+                [class.rejected]="selectedStudent()!.status === 2"
               >
                 {{
-                  selectedStudent.status === 0
+                  selectedStudent()!.status === 0
                     ? 'Pending Approval'
-                    : selectedStudent.status === 1
+                    : selectedStudent()!.status === 1
                       ? 'Approved'
                       : 'Rejected'
                 }}
@@ -347,19 +347,19 @@
           <div class="academic-highlights">
             <div class="highlight-card cgpa-card">
               <span>CGPA</span>
-              <strong>{{ selectedStudent.cgpa | number: '1.2-2' }}</strong>
+              <strong>{{ selectedStudent()!.cgpa | number: '1.2-2' }}</strong>
               <small>Academic Performance</small>
             </div>
 
             <div class="highlight-card department-card">
               <span>DEPARTMENT</span>
-              <strong>{{ selectedStudent.department }}</strong>
+              <strong>{{ selectedStudent()!.department }}</strong>
               <small>Academic Branch</small>
             </div>
 
             <div class="highlight-card age-card">
               <span>AGE</span>
-              <strong>{{ selectedStudent.age }}</strong>
+              <strong>{{ selectedStudent()!.age }}</strong>
               <small>Years old</small>
             </div>
           </div>
@@ -370,13 +370,13 @@
 
             <div class="detail-row">
               <span>Student ID</span>
-              <strong>#{{ selectedStudent.studentId }}</strong>
+              <strong>#{{ selectedStudent()!.studentId }}</strong>
             </div>
 
             <div class="detail-row">
               <span>Registered On</span>
               <strong>
-                {{ selectedStudent.registeredAt | date: 'dd MMM yyyy' }}
+                {{ selectedStudent()!.registeredAt | date: 'dd MMM yyyy' }}
               </strong>
             </div>
 
@@ -384,8 +384,8 @@
               <span>Reviewed On</span>
               <strong>
                 {{
-                  selectedStudent.reviewedAt
-                    ? (selectedStudent.reviewedAt | date: 'dd MMM yyyy')
+                  selectedStudent()!.reviewedAt
+                    ? (selectedStudent()!.reviewedAt | date: 'dd MMM yyyy')
                     : 'Not reviewed yet'
                 }}
               </strong>
@@ -395,7 +395,7 @@
 
         <!-- Footer -->
         <div class="student-modal-footer">
-          <button class="btn-close-modal" (click)="selectedStudent = null">Close Profile</button>
+          <button class="btn-close-modal" (click)="closeStudentDetails()">Close Profile</button>
         </div>
       }
     </div>
@@ -403,7 +403,7 @@
 }
 
 <!-- Edit Student Modal -->
-@if (isEditModalOpen) {
+@if (isEditModalOpen()) {
   <div class="student-modal-backdrop">
     <div class="student-modal">
       <div class="student-modal-header">

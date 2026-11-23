@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { StudentService } from '../student.service';
 import { StudentResponse, StudentFilter, UpdateStudentRequest } from '../student.models';
@@ -15,22 +15,21 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 })
 export class StudentList implements OnInit {
   private studentService = inject(StudentService);
-  private cdr = inject(ChangeDetectorRef);
 
-  students: StudentResponse[] = [];
 
-  isLoading = false;
-  errorMessage = '';
+  students = signal<StudentResponse[]>([]);
 
-  pageNumber = 1;
-  pageSize = 5;
-  totalRecords = 0;
-  totalPages = 0;
+  isLoading = signal(false);
+  errorMessage = signal('');
 
-  selectedStudent: StudentResponse | null = null;
-  isDetailsLoading = false;
-  detailsError = '';
+  pageNumber = signal(1);
+  pageSize = signal(5);
+  totalRecords = signal(0);
+  totalPages = signal(0);
 
+  selectedStudent = signal<StudentResponse | null>(null);
+  isDetailsLoading = signal(false);
+  detailsError = signal('');
   filters: StudentFilter = {
     search: '',
     status: null,
@@ -46,25 +45,25 @@ export class StudentList implements OnInit {
   }
 
   loadStudents(): void {
-    this.isLoading = true;
-    this.errorMessage = '';
+    this.isLoading.set(true);
+    this.errorMessage.set('');
 
-    this.studentService.getStudents(this.pageNumber, this.pageSize, this.filters).subscribe({
+    this.studentService.getStudents(this.pageNumber(), this.pageSize(), this.filters).subscribe({
       next: (response) => {
-        this.students = response.items;
-        this.totalRecords = response.totalRecords;
-        this.totalPages = response.totalPages;
-        this.pageNumber = response.pageNumber;
-        this.pageSize = response.pageSize;
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.students.set(response.items);
+        this.totalRecords.set(response.totalRecords);
+        this.totalPages.set(response.totalPages);
+        this.pageNumber.set(response.pageNumber);
+        this.pageSize.set(response.pageSize);
+        this.isLoading.set(false);
+
       },
 
       error: (error) => {
         console.error('Failed to load students:', error);
-        this.errorMessage = 'Unable to load students.';
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.errorMessage.set('Unable to load students.');
+        this.isLoading.set(false);
+
       },
     });
   }
@@ -104,27 +103,27 @@ export class StudentList implements OnInit {
   }
 
   goToPreviousPage(): void {
-    if (this.pageNumber > 1) {
-      this.pageNumber--;
+    if (this.pageNumber() > 1) {
+      this.pageNumber.update(page => page - 1);
       this.loadStudents();
     }
   }
 
   goToNextPage(): void {
-    if (this.pageNumber < this.totalPages) {
-      this.pageNumber++;
+    if (this.pageNumber() < this.totalPages()) {
+      this.pageNumber.update(page => page + 1);
       this.loadStudents();
     }
   }
 
   changePageSize(size: string): void {
-    this.pageSize = Number(size);
-    this.pageNumber = 1;
+    this.pageSize.set(Number(size));
+    this.pageNumber.set(1);
     this.loadStudents();
   }
 
   applyFilters(): void {
-    this.pageNumber = 1;
+    this.pageNumber.set(1);
     this.loadStudents();
   }
 
@@ -139,31 +138,35 @@ export class StudentList implements OnInit {
       maxCgpa: null,
     };
 
-    this.pageNumber = 1;
+    this.pageNumber.set(1);
     this.loadStudents();
   }
 
   viewStudent(id: number): void {
-    this.selectedStudent = null;
-    this.isDetailsLoading = true;
-    this.detailsError = '';
+    this.selectedStudent.set(null);
+    this.isDetailsLoading.set(true);
+    this.detailsError.set('');
 
     this.studentService.getStudentById(id).subscribe({
       next: (student) => {
-        this.selectedStudent = student;
-        this.isDetailsLoading = false;
-        this.cdr.markForCheck();
+        this.selectedStudent.set(student);
+        this.isDetailsLoading.set(false);
+
       },
       error: (error) => {
         console.error('Failed to load student details:', error);
-        this.detailsError = 'Unable to load student details.';
-        this.isDetailsLoading = false;
-        this.cdr.markForCheck();
+        this.detailsError.set('Unable to load student details.');
+        this.isDetailsLoading.set(false);
+
       },
     });
   }
 
-  isEditModalOpen = false;
+  closeStudentDetails(): void {
+    this.selectedStudent.set(null);
+    this.detailsError.set('');
+  }
+  isEditModalOpen = signal(false);
   editingStudentId: number | null = null;
 
   studentForm = new FormGroup({
@@ -180,7 +183,7 @@ export class StudentList implements OnInit {
 
   editStudent(id: number): void {
     this.editingStudentId = id;
-    this.isEditModalOpen = true;
+    this.isEditModalOpen.set(true);
 
     this.studentService.getStudentById(id).subscribe({
       next: (student) => {
@@ -199,7 +202,7 @@ export class StudentList implements OnInit {
   }
 
   closeEditModal(): void {
-    this.isEditModalOpen = false;
+    this.isEditModalOpen.set(false);
     this.editingStudentId = null;
     this.studentForm.reset({
       name: '',
