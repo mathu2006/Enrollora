@@ -1,6 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { StudentService } from '../student.service';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { RegisterStudentRequest } from '../../../../core/auth/auth.models';
 import { StudentResponse, StudentFilter, UpdateStudentRequest } from '../student.models';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,6 +17,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 })
 export class StudentList implements OnInit {
   private studentService = inject(StudentService);
+  private authService = inject(AuthService);
 
 
   students = signal<StudentResponse[]>([]);
@@ -165,6 +168,71 @@ export class StudentList implements OnInit {
   closeStudentDetails(): void {
     this.selectedStudent.set(null);
     this.detailsError.set('');
+  }
+  isAddStudentModalOpen = signal(false);
+
+  addStudentForm = new FormGroup({
+    name: new FormControl('', Validators.required),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required, Validators.minLength(8)]),
+    department: new FormControl('', Validators.required),
+    age: new FormControl(18, [Validators.required, Validators.min(17), Validators.max(60)]),
+    cgpa: new FormControl(0, [Validators.required, Validators.min(0), Validators.max(10)]),
+  });
+
+  openAddStudentModal(): void {
+    this.addStudentForm.reset({
+      name: '',
+      email: '',
+      password: '',
+      department: '',
+      age: 18,
+      cgpa: 0,
+    });
+    this.isAddStudentModalOpen.set(true);
+  }
+
+  closeAddStudentModal(): void {
+    this.isAddStudentModalOpen.set(false);
+    this.addStudentForm.reset({
+      name: '',
+      email: '',
+      password: '',
+      department: '',
+      age: 18,
+      cgpa: 0,
+    });
+  }
+
+  addStudent(): void {
+    if (this.addStudentForm.invalid) {
+      this.addStudentForm.markAllAsTouched();
+      return;
+    }
+
+    const formValue = this.addStudentForm.getRawValue();
+
+    const request: RegisterStudentRequest = {
+      name: formValue.name!,
+      email: formValue.email!,
+      password: formValue.password!,
+      department: formValue.department!,
+      age: formValue.age!,
+      cgpa: formValue.cgpa!,
+    };
+
+    this.authService.register(request).subscribe({
+      next: (response) => {
+        alert(response.message);
+        this.closeAddStudentModal();
+        this.pageNumber.set(1);
+        this.loadStudents();
+      },
+      error: (error) => {
+        console.error('Failed to add student:', error);
+        alert(error.error?.message || 'Unable to add student.');
+      },
+    });
   }
   isEditModalOpen = signal(false);
   editingStudentId: number | null = null;

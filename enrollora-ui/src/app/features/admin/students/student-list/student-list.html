@@ -5,7 +5,12 @@
       <p>Manage student registrations and approvals.</p>
     </div>
 
-    <div class="student-count">Total Students: {{ totalRecords() }}</div>
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+      <div class="student-count">Total Students: {{ totalRecords() }}</div>
+      <button type="button" class="btn btn-apply" (click)="openAddStudentModal()">
+        + Add Student
+      </button>
+    </div>
   </div>
 
   @if (isLoading()) {
@@ -450,6 +455,71 @@
 
             <button type="submit" class="btn-close-modal" [disabled]="studentForm.invalid">
               Update Student
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Add Student Modal -->
+@if (isAddStudentModalOpen()) {
+  <div class="student-modal-backdrop">
+    <div class="student-modal">
+      <div class="student-modal-header">
+        <div>
+          <span class="modal-eyebrow">STUDENT MANAGEMENT</span>
+          <h3>Add Student</h3>
+          <p>Enter student registration information</p>
+        </div>
+
+        <button type="button" class="modal-close" (click)="closeAddStudentModal()">
+          &times;
+        </button>
+      </div>
+
+      <div class="student-modal-body">
+        <form [formGroup]="addStudentForm" (ngSubmit)="addStudent()">
+          <div class="mb-3">
+            <label class="form-label">Student Name</label>
+            <input type="text" class="form-control" formControlName="name" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" formControlName="email" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" formControlName="password" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Department</label>
+            <input type="text" class="form-control" formControlName="department" />
+          </div>
+
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-label">Age</label>
+              <input type="number" class="form-control" formControlName="age" />
+            </div>
+
+            <div class="col-6 mb-3">
+              <label class="form-label">CGPA</label>
+              <input type="number" class="form-control" step="0.01" formControlName="cgpa" />
+            </div>
+          </div>
+
+          <div class="student-modal-footer">
+            <button type="button" class="btn btn-light" (click)="closeAddStudentModal()">
+              Cancel
+            </button>
+
+            <button type="submit" class="btn-close-modal" [disabled]="addStudentForm.invalid">
+              Add Student
             </button>
           </div>
         </form>
