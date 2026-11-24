@@ -490,3 +490,158 @@
     padding: 18px;
   }
 }
+
+/* Create Course Modal */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(35, 25, 60, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.course-modal {
+  width: 100%;
+  max-width: 540px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(35, 25, 60, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 25px;
+}
+
+.modal-header h2 {
+  margin: 7px 0;
+  color: #302942;
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.modal-header p {
+  margin: 0;
+  color: #898397;
+  font-size: 13px;
+}
+
+.modal-close {
+  border: none;
+  background: #f3edff;
+  color: #8050d8;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.form-group > label {
+  color: #514963;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.form-group input:not([type="checkbox"]) {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #e5e0ed;
+  border-radius: 9px;
+  padding: 12px 13px;
+  color: #352c49;
+  font-size: 14px;
+  outline: none;
+}
+
+.form-group input:focus {
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+}
+
+.checkbox-group input {
+  accent-color: #8b5cf6;
+  width: 16px;
+  height: 16px;
+}
+
+.form-error {
+  color: #c24141;
+  background: #fff0f0;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.btn-cancel,
+.btn-submit {
+  border: none;
+  padding: 11px 18px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background: #f2eff6;
+  color: #625b70;
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  color: white;
+}
+
+.btn-submit:disabled,
+.btn-cancel:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 500px) {
+  .course-modal {
+    padding: 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
