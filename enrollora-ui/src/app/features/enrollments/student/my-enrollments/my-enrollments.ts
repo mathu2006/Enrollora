@@ -52,7 +52,7 @@ export class MyEnrollments implements OnInit {
   }
 
   statusLabel(status: number): string {
-    return status === 1 ? 'Active' : 'Cancelled';
+    return status === 0 ? 'Active' : 'Cancelled';
   }
 
   previousPage(): void {
@@ -69,3 +69,4 @@ export class MyEnrollments implements OnInit {
     }
   }
 }
+

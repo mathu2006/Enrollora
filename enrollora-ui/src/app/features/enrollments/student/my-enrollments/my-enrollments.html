@@ -54,8 +54,8 @@
                 <td>
                   <span
                     class="status-badge"
-                    [class.active]="enrollment.status === 1"
-                    [class.cancelled]="enrollment.status !== 1"
+                    [class.active]="enrollment.status === 0"
+                    [class.cancelled]="enrollment.status !== 0"
                   >
                     {{ statusLabel(enrollment.status) }}
                   </span>
@@ -84,3 +84,4 @@
     </div>
   }
 </div>
+
