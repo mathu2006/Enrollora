@@ -42,9 +42,16 @@ export const routes: Routes = [
             (m) => m.EnrollmentListComponent,
           ),
       },
+
+      {
+        path: 'cancellation-requests',
+        loadComponent: () =>
+          import('./features/admin/cancellation-requests/cancellation-requests').then(
+            (m) => m.CancellationRequests,
+          ),
+      },
     ],
-  },
-  {
+  },  {
     path: 'student',
     canActivate: [authGuard, roleGuard],
     data: { role: 'Student' },
@@ -70,6 +77,7 @@ export const routes: Routes = [
             (m) => m.MyEnrollments,
           ),
       },
+
       {
         path: '',
         redirectTo: 'courses',
@@ -87,3 +95,6 @@ export const routes: Routes = [
     redirectTo: 'login',
   },
 ];
+
+
+

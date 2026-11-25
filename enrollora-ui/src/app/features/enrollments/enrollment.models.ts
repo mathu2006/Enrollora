@@ -24,3 +24,27 @@ export interface EnrollmentFilter {
 }
 
 export type EnrollmentPagedResult = PagedResult<EnrollmentResponse>;
+
+export interface CancellationResponse {
+  cancellationRequestId: number;
+  enrollmentId: number;
+  studentId: number;
+  studentName: string;
+  studentEmail: string;
+  courseName: string;
+  reason: string;
+  status: number;
+  requestedAt: string;
+  reviewedAt: string | null;
+  adminRemarks: string | null;
+}
+
+export interface CreateCancellationRequest {
+  reason: string;
+}
+
+export interface ReviewCancellationRequest {
+  adminRemarks?: string;
+}
+
+export type CancellationPagedResult = PagedResult<CancellationResponse>;

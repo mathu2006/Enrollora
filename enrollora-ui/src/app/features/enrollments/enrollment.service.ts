@@ -8,6 +8,9 @@ import {
   CreateEnrollmentRequest,
   EnrollmentFilter,
   EnrollmentResponse,
+  CancellationResponse,
+  CreateCancellationRequest,
+  ReviewCancellationRequest,
 } from './enrollment.models';
 
 @Injectable({
@@ -69,6 +72,64 @@ export class EnrollmentService {
 
   createEnrollment(request: CreateEnrollmentRequest): Observable<EnrollmentResponse> {
     return this.http.post<EnrollmentResponse>(this.apiUrl, request);
+  }
+
+  getCancellationRequests(
+    pageNumber = 1,
+    pageSize = 10,
+  ): Observable<PagedResult<CancellationResponse>> {
+    const params = new HttpParams()
+      .set('pageNumber', pageNumber)
+      .set('pageSize', pageSize);
+
+    return this.http.get<PagedResult<CancellationResponse>>(
+      `${environment.apiUrl}/cancellation-requests`,
+      { params },
+    );
+  }
+
+  getMyCancellationRequests(
+    pageNumber = 1,
+    pageSize = 10,
+  ): Observable<PagedResult<CancellationResponse>> {
+    const params = new HttpParams()
+      .set('pageNumber', pageNumber)
+      .set('pageSize', pageSize);
+
+    return this.http.get<PagedResult<CancellationResponse>>(
+      `${environment.apiUrl}/cancellation-requests/my`,
+      { params },
+    );
+  }
+
+  createCancellationRequest(
+    enrollmentId: number,
+    request: CreateCancellationRequest,
+  ): Observable<CancellationResponse> {
+    return this.http.post<CancellationResponse>(
+      `${this.apiUrl}/${enrollmentId}/cancellation-request`,
+      request,
+    );
+  }
+
+  approveCancellationRequest(
+    id: number,
+    request: ReviewCancellationRequest,
+  ): Observable<CancellationResponse> {
+    return this.http.put<CancellationResponse>(
+      `${environment.apiUrl}/cancellation-requests/${id}/approve`,
+      request,
+    );
+  }
+
+  rejectCancellationRequest(
+    id: number,
+    request: ReviewCancellationRequest,
+  ): Observable<CancellationResponse> {
+    return this.http.put<CancellationResponse>(
+      `${environment.apiUrl}/cancellation-requests/${id}/reject`,
+      request,
+    );
   }
 
   private buildParams(

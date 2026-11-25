@@ -7,6 +7,10 @@
     </div>
   </div>
 
+  @if (cancellationSuccess()) {
+    <div class="success-message">{{ cancellationSuccess() }}</div>
+  }
+
   @if (isLoading()) {
     <div class="state-card">
       <div class="loader"></div>
@@ -14,14 +18,14 @@
     </div>
   } @else if (errorMessage()) {
     <div class="state-card error-state">
-      <span>⚠</span>
+      <span>?</span>
       <h3>Could not load enrollments</h3>
       <p>{{ errorMessage() }}</p>
       <button class="retry-btn" (click)="loadEnrollments()">Try Again</button>
     </div>
   } @else if (enrollments().length === 0) {
     <div class="state-card">
-      <span class="empty-icon">🎓</span>
+      <span class="empty-icon">??</span>
       <h3>No enrollments yet</h3>
       <p>Browse available courses and enroll to get started.</p>
     </div>
@@ -34,6 +38,8 @@
               <th>Course</th>
               <th>Enrollment Date</th>
               <th>Status</th>
+              <th>Cancellation Request</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -60,6 +66,40 @@
                     {{ statusLabel(enrollment.status) }}
                   </span>
                 </td>
+                <td>
+                  @if (requestForEnrollment(enrollment.enrollmentId); as request) {
+                    <span class="status-badge"
+                      [class.active]="request.status === 0"
+                      [class.cancelled]="request.status === 1"
+                    >
+                      {{ cancellationStatusLabel(request.status) }}
+                    </span>
+                    @if (request.adminRemarks) {
+                      <small class="admin-remarks">Admin: {{ request.adminRemarks }}</small>
+                    }
+                  } @else {
+                    <span>�</span>
+                  }
+                </td>
+                <td>
+                  @if (enrollment.status === 0) {
+                    @if (!requestForEnrollment(enrollment.enrollmentId) ||
+                         requestForEnrollment(enrollment.enrollmentId)?.status === 2) {
+                      <button
+                        class="retry-btn"
+                        (click)="openCancellationForm(enrollment.enrollmentId)"
+                      >
+                        Request Cancellation
+                      </button>
+                    } @else if (requestForEnrollment(enrollment.enrollmentId)?.status === 0) {
+                      <span>Awaiting review</span>
+                    } @else {
+                      <span>Cancelled</span>
+                    }
+                  } @else {
+                    <span>Not available</span>
+                  }
+                </td>
               </tr>
             }
           </tbody>
@@ -83,5 +123,40 @@
       </div>
     </div>
   }
-</div>
 
+  @if (selectedEnrollmentId() !== null) {
+    <div class="cancellation-form-card">
+      <h3>Request Course Cancellation</h3>
+      <p>Please provide a reason for cancelling this enrollment.</p>
+
+      <textarea
+        rows="4"
+        maxlength="1000"
+        placeholder="Enter your cancellation reason..."
+        [value]="cancellationReason()"
+        (input)="cancellationReason.set($any($event.target).value)"
+      ></textarea>
+
+      @if (cancellationError()) {
+        <p class="error-message">{{ cancellationError() }}</p>
+      }
+
+      <div class="form-actions">
+        <button
+          class="retry-btn"
+          (click)="closeCancellationForm()"
+          [disabled]="isSubmittingCancellation()"
+        >
+          Close
+        </button>
+        <button
+          class="retry-btn"
+          (click)="submitCancellationRequest()"
+          [disabled]="isSubmittingCancellation() || !cancellationReason().trim()"
+        >
+          {{ isSubmittingCancellation() ? 'Submitting...' : 'Submit Request' }}
+        </button>
+      </div>
+    </div>
+  }
+</div>

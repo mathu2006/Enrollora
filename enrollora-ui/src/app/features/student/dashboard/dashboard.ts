@@ -92,7 +92,7 @@ export class Dashboard implements OnInit {
           };
 
           this.enrollmentService
-            .getMyEnrollments(1, 1, { status: 1 })
+            .getMyEnrollments(1, 1, { status: 0 })
             .subscribe({
               next: (activeResponse) => {
                 this.activeEnrollmentCount.set(activeResponse.totalRecords);
@@ -107,7 +107,7 @@ export class Dashboard implements OnInit {
             });
 
           this.enrollmentService
-            .getMyEnrollments(1, 1, { status: 0 })
+            .getMyEnrollments(1, 1, { status: 1 })
             .subscribe({
               next: (cancelledResponse) => {
                 this.cancelledEnrollmentCount.set(cancelledResponse.totalRecords);
@@ -132,7 +132,7 @@ export class Dashboard implements OnInit {
   }
 
   statusLabel(status: number): string {
-    return status === 1 ? 'Active' : 'Cancelled';
+    return status === 0 ? 'Active' : 'Cancelled';
   }
 
   private getErrorMessage(error: HttpErrorResponse, fallback: string): string {
@@ -152,3 +152,5 @@ export class Dashboard implements OnInit {
     return fallback;
   }
 }
+
+

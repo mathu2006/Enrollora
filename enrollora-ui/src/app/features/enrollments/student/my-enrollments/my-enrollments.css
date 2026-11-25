@@ -219,3 +219,81 @@ td {
     flex-direction: column;
   }
 }
+/* Cancellation request styles */
+.success-message {
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #e9f8ef;
+  color: #16834a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.error-message {
+  color: #dc4545;
+  font-size: 13px;
+  margin: 10px 0;
+}
+
+.admin-remarks {
+  display: block;
+  margin-top: 7px;
+  color: #898397;
+  max-width: 180px;
+  line-height: 1.5;
+}
+
+.cancellation-form-card {
+  margin-top: 22px;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #efedf4;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(35, 25, 60, 0.035);
+  max-width: 650px;
+}
+
+.cancellation-form-card h3 {
+  margin: 0 0 8px;
+  color: #342c47;
+  font-size: 18px;
+}
+
+.cancellation-form-card p {
+  color: #898397;
+  font-size: 13px;
+}
+
+.cancellation-form-card textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #e9e5f0;
+  border-radius: 9px;
+  resize: vertical;
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.cancellation-form-card textarea:focus {
+  border-color: #8b5cf6;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.form-actions button {
+  cursor: pointer;
+}
+
+.form-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+

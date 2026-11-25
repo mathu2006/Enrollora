@@ -1,0 +1,93 @@
+<div class="cancellation-page">
+  <div class="page-header">
+    <div>
+      <h2>Cancellation Requests</h2>
+      <p>Review and manage student course cancellation requests.</p>
+    </div>
+    <div class="summary-card">
+      <span>Total Requests</span>
+      <h3>{{ totalRecords() }}</h3>
+    </div>
+  </div>
+
+  @if (successMessage()) {
+    <div class="alert alert-success">{{ successMessage() }}</div>
+  }
+
+  @if (isLoading()) {
+    <div class="state-message">
+      <div class="spinner-border text-primary"></div>
+      <p>Loading cancellation requests...</p>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger">
+      {{ errorMessage() }}
+      <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadRequests()">Retry</button>
+    </div>
+  }
+
+  @if (!isLoading() && !errorMessage()) {
+    <div class="table-container">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Reason</th>
+            <th>Requested Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (request of requests(); track request.cancellationRequestId) {
+            <tr>
+              <td>
+                <strong>{{ request.studentName }}</strong>
+                <small class="d-block text-muted">{{ request.studentEmail }}</small>
+              </td>
+              <td>{{ request.courseName }}</td>
+              <td class="reason-cell">{{ request.reason }}</td>
+              <td>{{ request.requestedAt | date: 'dd MMM yyyy' }}</td>
+              <td>
+                <span class="status-badge"
+                  [class.pending]="request.status === 0"
+                  [class.approved]="request.status === 1"
+                  [class.rejected]="request.status === 2">
+                  {{ statusLabel(request.status) }}
+                </span>
+              </td>
+              <td>
+                @if (request.status === 0) {
+                  <div class="action-buttons">
+                    <button class="approve-btn" (click)="approveRequest(request)">Approve</button>
+                    <button class="reject-btn" (click)="rejectRequest(request)">Reject</button>
+                  </div>
+                } @else {
+                  <span class="text-muted">Reviewed</span>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-state">No cancellation requests found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-container">
+      <span>Showing {{ requests().length }} of {{ totalRecords() }} requests</span>
+      <div class="pagination-actions">
+        <button class="btn btn-outline-secondary"
+          [disabled]="pageNumber() === 1" (click)="previousPage()">Previous</button>
+        <span>Page {{ pageNumber() }} of {{ totalPages() }}</span>
+        <button class="btn btn-outline-secondary"
+          [disabled]="pageNumber() >= totalPages()" (click)="nextPage()">Next</button>
+      </div>
+    </div>
+  }
+</div>
